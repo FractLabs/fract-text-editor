@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 fs = "0.0.5"
+iced = "0.13.1"

@@ -1,5 +1,6 @@
 use std::io;
 use std::io::Write;
+use std::fs;
 use std::fs::OpenOptions;
 fn main() {
     let file_to_write = "file.txt";
@@ -25,8 +26,20 @@ fn main() {
         io::stdin().read_line(&mut text);
         line += 1;
 
-        texts.push(format!("{text}"));
-        writeln!(write_options, "{}", &text.trim()).expect("fail in writing");
+        if text.trim() == "--save" {
+            println!("Saving...");
+            for t in &texts {
+                writeln!(write_options, "{}", t).expect("fail in writing");
+            }
+            texts.clear();
+        } else if text.trim() == "--erase" {
+            println!("Erasing...");
+            //OpenOptions::new().write(true).truncate(true).open(file_to_write).expect("cannot erase file.");
+            fs::write(file_to_write, "").expect("cannot erase file");
+        } else {
+            texts.push(format!("{}", text.trim()));
+        }
+        //writeln!(write_options, "{}", &text.trim()).expect("fail in writing");
         //write_options.write_all("{to_write}".as_bytes())?;
     }
 }
