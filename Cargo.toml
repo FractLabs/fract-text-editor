@@ -5,4 +5,5 @@ edition = "2024"
 
 [dependencies]
 fs = "0.0.5"
+rfd = "0.15.3"
 slint = "1.12.1"
