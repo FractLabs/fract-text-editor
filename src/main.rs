@@ -2,7 +2,37 @@ use std::io;
 use std::io::Write;
 use std::fs;
 use std::fs::OpenOptions;
+use slint::slint;
+
+slint! {
+    import { HorizontalBox, Button } from "std-widgets.slint";
+    export component FractTextEditor inherits Window {
+        title: "Fract Text Editor";
+        min-height: 300px;
+        min-width: 500px;
+        max-height: 600px;
+        max-width: 800px;
+
+        HorizontalBox {
+            Button {
+                text: "New";
+                width: 60px;
+                height: 40px;
+            } 
+            
+            Button {
+                text: "Open";
+                width: 60px;
+                height: 40px;
+            } 
+            padding: 5px;
+            spacing: 30px;
+        }
+    }
+}
+
 fn main() {
+    FractTextEditor::new().unwrap().run().unwrap();
     let file_to_write = "file.txt";
     let mut write_options = OpenOptions::new()
     .append(true)
@@ -10,36 +40,4 @@ fn main() {
     .write(true)
     .open(file_to_write)
     .expect("Error");
-    let mut to_write = "teste breaaaaaaaaaad";
-    let mut line = 1;
-    println!("Fract Text Editor");
-    println!("Press CTRL + C to exit.");
-    // {}
-    // ^ ela vai guardar tudo o que tem dentro dela
-    // {"ola", "ola1", "ola2"}
-    let mut texts: Vec<String> = Vec::new();
-    loop {
-        print!("{line}. ");
-        io::stdout().flush().unwrap();
-        let mut text = String::new();   
-
-        io::stdin().read_line(&mut text);
-        line += 1;
-
-        if text.trim() == "--save" {
-            println!("Saving...");
-            for t in &texts {
-                writeln!(write_options, "{}", t).expect("fail in writing");
-            }
-            texts.clear();
-        } else if text.trim() == "--erase" {
-            println!("Erasing...");
-            //OpenOptions::new().write(true).truncate(true).open(file_to_write).expect("cannot erase file.");
-            fs::write(file_to_write, "").expect("cannot erase file");
-        } else {
-            texts.push(format!("{}", text.trim()));
-        }
-        //writeln!(write_options, "{}", &text.trim()).expect("fail in writing");
-        //write_options.write_all("{to_write}".as_bytes())?;
-    }
 }
