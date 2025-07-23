@@ -2,7 +2,6 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <filesystem>
 
 int main() {
     std::vector<std::string> buffer;
@@ -34,7 +33,8 @@ int main() {
             file.close();
             std::cout << "Saved!\n";
         } else if(text=="/erase") {
-            std::ofstream file("file.txt");
+            std::ofstream file(saveName);
+            std::cout << "Erasing...\n";
             file << "";
         } else {
             buffer.push_back(text);
