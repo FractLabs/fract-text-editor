@@ -9,7 +9,8 @@ int main() {
     std::string text;
     std::string saveName;
     std::cout << "***** Fract Text Editor *****\n";
-    std::cout << "Type /save to save your texts.\n\n";
+    std::cout << "Type /save to save your texts.\n";
+    std::cout << "Type /erase to erase your texts.\n\n";
 
     while(true){
         std::cout << "> ";
