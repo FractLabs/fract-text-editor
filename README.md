@@ -6,7 +6,7 @@ It's in prototype; feel free to contribute.
 
 ## Todo List
 
-- Make it work
-- Create an UI
+- Make it work ✅
+- Create an UI ✅
 - Make it do everything a basic text editor does
-- Make something inovative
+- Make it better

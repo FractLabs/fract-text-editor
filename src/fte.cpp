@@ -10,16 +10,24 @@
 class FractTextEditor : public wxApp {
     wxFrame* frame;
     wxTextCtrl* textArea;
+    wxString currentPath;
     public:
         bool OnInit() override {
             frame = new wxFrame(nullptr, wxID_ANY, "Fract Text Editor", wxDefaultPosition, wxSize(500, 350));
             wxPanel* panel = new wxPanel(frame);
             wxButton* New = new wxButton(panel, wxID_ANY, "New", wxPoint(5, 5), wxSize(100, 35));
-            wxButton* Open = new wxButton(panel, wxID_ANY, "Open", wxPoint(115, 5), wxSize(100, 35));
+            wxButton* Open = new wxButton(panel, wxID_ANY, "Open", wxPoint(110, 5), wxSize(100, 35));
+            wxButton* Close = new wxButton(panel, wxID_ANY, "Close", wxPoint(215, 5), wxSize(100, 35));
+            wxButton* Save = new wxButton(panel, wxID_ANY, "Save", wxPoint(320, 5), wxSize(100, 35));
 
-            textArea = new wxTextCtrl(panel, wxID_ANY, "", wxPoint(5, 50), wxSize(570,300), wxTE_MULTILINE | wxTE_RICH2); 
-
+            textArea = new wxTextCtrl(panel, wxID_ANY, "", wxPoint(5, 50), wxSize(490,295), wxTE_MULTILINE | wxTE_RICH2); 
+            textArea->Hide();
+            
+            New->Bind(wxEVT_BUTTON, &FractTextEditor::NewFile, this);
             Open->Bind(wxEVT_BUTTON, &FractTextEditor::OpenFile, this);
+            Close->Bind(wxEVT_BUTTON, &FractTextEditor::CloseFile, this);
+            Save->Bind(wxEVT_BUTTON, &FractTextEditor::SaveFile, this);
+
             frame->Show();
             return true;
         }
@@ -29,8 +37,72 @@ class FractTextEditor : public wxApp {
 
             if (openFileDialog.ShowModal() == wxID_OK) {
                 wxString path = openFileDialog.GetPath();
+                std::ifstream file(path.ToStdString());
 
-                wxMessageBox("Selected file:\n" + path);
+                if (!file.is_open()) {
+                    wxMessageBox("Failed to open file!", "Error", wxICON_ERROR);
+                    return;
+                }
+
+                std::string line, content;
+                while (std::getline(file, line)) {
+                    content += line + "\n";
+                }
+                file.close();
+
+                textArea->SetValue(content);
+                textArea->Show();
+                frame->Layout();
+
+                currentPath = path;
+                frame->SetLabel("Fract Text Editor - " + path);
+            }
+        }
+
+        void NewFile(wxCommandEvent& event) {
+            textArea->Clear();
+            textArea->Show();
+            frame->Layout();
+
+            currentPath.Clear();
+            frame->SetLabel("Fract Text Editor - New File");
+        }
+
+        void SaveFile(wxCommandEvent& event) {
+            if (!textArea->IsShown()) {
+                wxMessageBox("No file is open to save!", "Warning", wxICON_WARNING);
+                return;
+            }
+
+            if (currentPath.IsEmpty()) {
+                wxFileDialog saveFileDialog(frame, _("Save file as"), "", "", "All files (*.*)|*.*", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+                if (saveFileDialog.ShowModal() == wxID_OK) {
+                    currentPath = saveFileDialog.GetPath();
+                } else {
+                    return;
+                }
+            }
+
+            std::ofstream file(currentPath.ToStdString());
+            if (!file.is_open()) {
+                wxMessageBox("Failed to save file!", "Error", wxICON_ERROR);
+                return;
+            }
+
+            file << textArea->GetValue().ToStdString();
+            file.close();
+
+            wxMessageBox("File saved sucessfully!", "Info", wxICON_INFORMATION);
+            frame->SetLabel("Fract Text Editor - " + currentPath);
+        }
+
+        void CloseFile(wxCommandEvent& event) {
+            if (textArea->IsShown()) {
+                textArea->Hide();
+                frame->Layout();
+                frame->SetLabel("Fract Text Editor");
+                currentPath.Clear();
             }
         }
 };
