@@ -3,8 +3,41 @@
 #include <vector>
 #include <fstream>
 #include <filesystem>
+#include <wx-3.2/wx/wx.h>
+#include <wx-3.2/wx/filedlg.h>
+#include <wx-3.2/wx/textctrl.h>
 
-int main() {
+class FractTextEditor : public wxApp {
+    wxFrame* frame;
+    wxTextCtrl* textArea;
+    public:
+        bool OnInit() override {
+            frame = new wxFrame(nullptr, wxID_ANY, "Fract Text Editor", wxDefaultPosition, wxSize(500, 350));
+            wxPanel* panel = new wxPanel(frame);
+            wxButton* New = new wxButton(panel, wxID_ANY, "New", wxPoint(5, 5), wxSize(100, 35));
+            wxButton* Open = new wxButton(panel, wxID_ANY, "Open", wxPoint(115, 5), wxSize(100, 35));
+
+            textArea = new wxTextCtrl(panel, wxID_ANY, "", wxPoint(5, 50), wxSize(570,300), wxTE_MULTILINE | wxTE_RICH2); 
+
+            Open->Bind(wxEVT_BUTTON, &FractTextEditor::OpenFile, this);
+            frame->Show();
+            return true;
+        }
+
+        void OpenFile(wxCommandEvent& event) {
+            wxFileDialog openFileDialog(frame, _("Select a file"), "", "", "All files (*.*)|*.*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+            if (openFileDialog.ShowModal() == wxID_OK) {
+                wxString path = openFileDialog.GetPath();
+
+                wxMessageBox("Selected file:\n" + path);
+            }
+        }
+};
+
+wxIMPLEMENT_APP(FractTextEditor);
+
+/* int main() {
     std::vector<std::string> buffer;
     std::string text;
     std::string currentFile;
@@ -76,4 +109,4 @@ int main() {
     }
 
     return 0;
-}
+} */
