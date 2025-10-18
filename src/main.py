@@ -9,12 +9,9 @@ class FractTextEditor(tk.Tk):
     def __init__(self, initial_path=None):
         super().__init__()
 
-        icon = tk.PhotoImage(file='./src/fractlabs.png')
-
         self.title(APP_TITLE)
         self.geometry("900x600")
         self.minsize(600, 400)
-        self.iconphoto(True, icon)
         self.current_file = None
         self._is_modified = False
 
