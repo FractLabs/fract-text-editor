@@ -1,4 +1,5 @@
-src/build/
-.vscode/
-.github/
-ignore/
+.venv/*
+build/*
+dist/*
+main.spec
+teste.txt
